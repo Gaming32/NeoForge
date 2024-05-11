@@ -302,18 +302,35 @@ configurations {
             javaComponent.addVariantsFromConfiguration(it) {}
         }
     }
-    modDevLibraries {
+    modDevApiElements {
         canBeResolved = false
         canBeConsumed = true
         afterEvaluate {
-            extendsFrom userDevCompileOnly, installerLibraries, moduleOnly
+            extendsFrom userdevCompileOnly, installerLibraries, moduleOnly
         }
         attributes {
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_API))
         }
         outgoing {
-            capability("net.neoforged:neoforge-moddev-libraries:${project.version}")
+            capability("net.neoforged:neoforge-dependencies:${project.version}")
+        }
+        javaComponent.addVariantsFromConfiguration(it) {}
+    }
+    modDevRuntimeElements {
+        canBeResolved = false
+        canBeConsumed = true
+        afterEvaluate {
+            extendsFrom installerLibraries, moduleOnly
+        }
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+        }
+        outgoing {
+            capability("net.neoforged:neoforge-dependencies:${project.version}")
         }
         javaComponent.addVariantsFromConfiguration(it) {}
     }
@@ -331,6 +348,21 @@ configurations {
             capability("net.neoforged:neoforge-moddev-module-path:${project.version}")
         }
         javaComponent.addVariantsFromConfiguration(it) {}
+    }
+}
+
+dependencies {
+    modDevApiElements("net.neoforged:neoform:${project.minecraft_version}-${project.neoform_version}") {
+        capabilities {
+            requireCapability 'net.neoforged:neoform-dependencies'
+        }
+        endorseStrictVersions()
+    }
+    modDevRuntimeElements("net.neoforged:neoform:${project.minecraft_version}-${project.neoform_version}") {
+        capabilities {
+            requireCapability 'net.neoforged:neoform-dependencies'
+        }
+        endorseStrictVersions()
     }
 }
 
